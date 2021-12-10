@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>level3</title>
+    <style>
+        #playlist{
+            display:flex;
+            flex-direction: row;
+            width: 900px;
+            flex-wrap: wrap;
+            margin: auto;
+        }
+        #playlist div{
+            width: 150px;
+        }
+        img{
+            width: 140px;
+        }
+    </style>
+</head>
+<body>
+   <div id='playlist'></div>
+   <script>
+      function Ajax(obj){
+          this.get = function(obj){
+              const xhr = new XMLHttpRequest();
+              xhr.open(obj.method,obj.url+'?'+obj.data);
+              xhr.send();
+              xhr.onreadystatechange = () =>{
+                  if(xhr.readyState === 4){
+                      if(xhr.status >=200 && xhr.status <300){
+                          obj.callback(JSON.parse(xhr.response).result)
+                      }
+                  }
+              } 
+            }
+            this.post = function(obj){
+                const xhr= new XMLHttpRequest();
+                xhr.open(obj.method,obj.url);
+                xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');
+                xhr.send(obj.data);
+                xhr.onreadystatechange = () =>{
+                    if(xhr.readyState === 4){
+                        if(xhr.status >=200 && xhr.status <300){
+                            obj.callback(JSON.parse(xhr.response).result)
+                        }
+                    }
+                }
+            }
+      }
+      const ajax = new Ajax({
+          method:'get',
+          data:'limit=30',
+          url:'http://cloud-music.pl-fe.cn/personalized',
+          callback: (msg) =>{
+              console.log(msg)
+          }
+        })
+        ajax.get({
+            method:'get',
+            data:'limit=30',
+            url:'http://cloud-music.pl-fe.cn/personalized',
+            callback:(msg) =>{
+                msg.forEach((song,index) =>{
+                  const playlist = document.getElementById('playlist');
+                  const div = document.createElement('div');
+                  const img = document.createElement('img');
+                  img.src = song.picUrl;
+                  div.append(img);
+                  const div2 = document.createElement('div');
+                  div2.innerHTML = song.name;
+                  div.append(div2);
+                  playlist.append(div);
+                })
+            }
+        })
+       
+   </script> 
+</body>
+</html>
